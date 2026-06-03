@@ -4,10 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WORKOUT</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#c8ff00">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Workout">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
@@ -86,7 +82,35 @@ label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase
 .set-in:focus{border-color:var(--accent);outline:none;}
 .set-in.done-in{opacity:.45;text-decoration:line-through;}
 
-/* check button */
+/* WHEEL PICKER */
+.wheel-btn{background:var(--surface3);border:1px solid var(--border);color:var(--text);border-radius:6px;width:100%;padding:7px 4px;text-align:center;font-size:13px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:border .15s;position:relative;}
+.wheel-btn:hover{border-color:var(--accent);}
+.wheel-btn.done-in{opacity:.45;text-decoration:line-through;}
+.wheel-btn .wval{display:block;font-size:15px;line-height:1.2;}
+.wheel-btn .wlabel{display:block;font-size:9px;color:var(--muted2);font-weight:400;letter-spacing:.3px;}
+
+/* Picker modal */
+.picker-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;align-items:flex-end;justify-content:center;}
+.picker-modal-bg.open{display:flex;}
+.picker-modal{background:var(--surface);border-radius:18px 18px 0 0;width:100%;max-width:480px;padding:0 0 24px;}
+.picker-modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid var(--border);}
+.picker-modal-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;}
+.picker-done-btn{background:var(--accent);color:#000;border:none;border-radius:8px;padding:8px 20px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:14px;cursor:pointer;}
+.drum{height:200px;overflow:hidden;position:relative;flex:1;}
+.drum::before,.drum::after{content:'';position:absolute;left:0;right:0;height:70px;z-index:2;pointer-events:none;}
+.drum::before{top:0;background:linear-gradient(to bottom,var(--surface),transparent);}
+.drum::after{bottom:0;background:linear-gradient(to top,var(--surface),transparent);}
+.drum-track{display:flex;flex-direction:column;align-items:center;cursor:grab;user-select:none;}
+.drum-item{height:40px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--muted2);transition:color .1s,font-size .1s;flex-shrink:0;width:100%;}
+.drum-item.selected{color:var(--text);font-size:26px;}
+.drum-highlight{position:absolute;top:50%;left:10%;right:10%;height:40px;transform:translateY(-50%);border-top:2px solid var(--accent);border-bottom:2px solid var(--accent);border-radius:4px;pointer-events:none;z-index:1;}
+.drums-wrap{display:flex;gap:0;padding:0 20px;margin-top:8px;}
+.drum-label{text-align:center;font-size:10px;color:var(--muted2);letter-spacing:.5px;text-transform:uppercase;padding:6px 0 0;font-weight:600;}
+
+/* Multiply button */
+.multiply-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted2);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.multiply-btn:hover{border-color:var(--accent);color:var(--accent);}
+.add-set-row{display:flex;gap:8px;margin-top:10px;align-items:center;}
 .chk{width:32px;height:32px;border-radius:6px;border:1px solid var(--border);background:var(--surface3);color:var(--muted2);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .15s;margin:0 auto;}
 .chk.done{background:var(--accent);border-color:var(--accent);color:#000;}
 .set-row-done td .set-in{opacity:.4;}
@@ -179,7 +203,7 @@ label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase
       <div style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Tiempo de sesión</div>
       <div style="display:flex;align-items:center;gap:10px;">
         <div class="timer-val" id="timer-val">00:00</div>
-        <button id="pause-btn" onclick="togglePause()" style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:16px;transition:all .15s;" title="Pausar/reanudar">⏸</button>
+        <button id="pause-btn" onclick="togglePause()" style="background:var(--accent);border:1px solid var(--accent);color:#000;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif;transition:all .15s;" title="Iniciar cronómetro">▶ Iniciar</button>
       </div>
     </div>
     <div style="text-align:center;">
@@ -193,7 +217,7 @@ label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase
       </div>
     </div>
     <div style="text-align:right;">
-      <div id="session-progress" style="font-size:13px;color:var(--muted);">0 / 7 categorías</div>
+      <div id="session-progress" style="font-size:13px;color:var(--muted);">0 / 10 categorías</div>
       <div id="session-sets-done" style="font-size:11px;color:var(--muted2);margin-top:2px;"></div>
     </div>
   </div>
@@ -272,6 +296,55 @@ label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase
   </div>
 </div>
 
+<!-- MULTIPLY MODAL -->
+<div class="picker-modal-bg" id="mx-modal">
+  <div class="picker-modal">
+    <div class="picker-modal-header">
+      <div class="picker-modal-title">Repetir serie</div>
+      <button class="picker-done-btn" onclick="confirmMultiply()">Añadir</button>
+    </div>
+    <div style="padding:20px 24px;">
+      <p id="mx-info" style="color:var(--muted);font-size:13px;margin-bottom:16px;"></p>
+      <label style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:8px;">¿Cuántas series iguales añadir?</label>
+      <input id="mx-input" type="number" min="1" max="20" value="3"
+        style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:14px;border-radius:10px;font-size:28px;font-weight:700;text-align:center;width:100%;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;outline:none;"
+        onkeydown="if(event.key==='Enter')confirmMultiply()">
+      <div style="display:flex;gap:10px;margin-top:14px;">
+        <button onclick="document.getElementById('mx-input').value=Math.max(1,parseInt(document.getElementById('mx-input').value||1)-1)" style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:12px;font-size:22px;cursor:pointer;">−</button>
+        <button onclick="document.getElementById('mx-input').value=parseInt(document.getElementById('mx-input').value||0)+1" style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:12px;font-size:22px;cursor:pointer;">+</button>
+      </div>
+      <button onclick="document.getElementById('mx-modal').classList.remove('open')" style="width:100%;margin-top:10px;background:transparent;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:8px;">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- WHEEL PICKER MODAL -->
+<div class="picker-modal-bg" id="wheel-picker-modal">
+  <div class="picker-modal">
+    <div class="picker-modal-header">
+      <div class="picker-modal-title" id="wheel-picker-title">Peso</div>
+      <button class="picker-done-btn" onclick="confirmWheelPicker()">Listo</button>
+    </div>
+    <div class="drums-wrap">
+      <div style="flex:1;">
+        <div class="drum" id="drum-main">
+          <div class="drum-highlight"></div>
+          <div class="drum-track" id="drum-main-track"></div>
+        </div>
+        <div class="drum-label" id="drum-main-label">kg</div>
+      </div>
+      <div style="flex:0 0 auto;display:flex;align-items:center;padding:0 6px;font-size:24px;color:var(--muted2);margin-bottom:20px;">.</div>
+      <div style="flex:0 0 60px;" id="drum-decimal-wrap">
+        <div class="drum" id="drum-dec">
+          <div class="drum-highlight"></div>
+          <div class="drum-track" id="drum-dec-track"></div>
+        </div>
+        <div class="drum-label">decimal</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="notif" id="notif"></div>
 
 <script>
@@ -279,23 +352,27 @@ label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase
 // DATOS
 // ══════════════════════════════════════════
 const CATS = [
-  {id:'push', label:'Push',             icon:'🔼', desc:'Pecho · hombros · tríceps'},
-  {id:'pull', label:'Pull',             icon:'🔽', desc:'Espalda · bíceps · remo'},
-  {id:'quad', label:'Pierna anterior',  icon:'🦵', desc:'Cuádriceps · glúteo anterior'},
-  {id:'hams', label:'Pierna posterior', icon:'🦶', desc:'Isquios · glúteo · gemelos'},
-  {id:'arms', label:'Brazos',           icon:'💪', desc:'Bíceps · tríceps · antebrazos'},
-  {id:'core', label:'Abdomen',          icon:'🔥', desc:'Core · abdominales · lumbar'},
-  {id:'prehab', label:'Prehab',         icon:'🩹', desc:'Pies · rodillas · cuello · zonas con molestias'},
+  {id:'potencia', label:'Potencia',        icon:'💥', desc:'Olímpicos · explosivos · saltos · velocidad'},
+  {id:'quad',     label:'Pierna anterior', icon:'🦵', desc:'Cuádriceps · glúteo anterior'},
+  {id:'push',     label:'Push',            icon:'🔼', desc:'Pecho · hombros · tríceps'},
+  {id:'hams',     label:'Pierna posterior',icon:'🦶', desc:'Isquios · glúteo · gemelos'},
+  {id:'pull',     label:'Pull',            icon:'🔽', desc:'Espalda · bíceps · remo'},
+  {id:'core',     label:'Abdomen',         icon:'🔥', desc:'Core · abdominales · lumbar'},
+  {id:'arms',     label:'Brazos',          icon:'💪', desc:'Bíceps · tríceps · antebrazos'},
+  {id:'prehab',   label:'Prehab',          icon:'🩹', desc:'Pies · rodillas · cuello · zonas con molestias'},
+  {id:'extra',    label:'Trabajo extra',   icon:'⚡', desc:'Ejercicios adicionales · cardio · movilidad · etc.'},
 ];
 
 const DEFAULTS = {
-  push:['Press banca plano','Press banca inclinado','Press militar','Aperturas cable','Fondos en paralelas','Press mancuernas'],
-  pull:['Dominadas','Remo con barra','Jalón al pecho','Remo en polea baja','Remo con mancuerna','Face pull'],
+  potencia:['Arrancada','Clean & jerk','Sentadilla con salto','Box jump','Salto al cajón','Slam ball','Power clean','Empuje de trineo','Balanceo de kettlebell','Sprint 30m','Lanzamiento de balón medicinal','Cargada de potencia'],
   quad:['Sentadilla','Prensa de pierna','Zancadas','Extensiones cuádriceps','Sentadilla búlgara','Hack squat'],
+  push:['Press banca plano','Press banca inclinado','Press militar','Aperturas cable','Fondos en paralelas','Press mancuernas'],
   hams:['Peso muerto rumano','Curl femoral tumbado','Curl femoral sentado','Hip thrust','Buenos días','Peso muerto sumo'],
-  arms:['Curl barra','Curl mancuernas','Curl martillo','Press francés','Extensiones tríceps cable','Curl concentrado'],
+  pull:['Dominadas','Remo con barra','Jalón al pecho','Remo en polea baja','Remo con mancuerna','Face pull'],
   core:['Plancha','Rueda abdominal','Crunch en polea','Elevación de piernas','Russian twist','Plancha lateral'],
+  arms:['Curl barra','Curl mancuernas','Curl martillo','Press francés','Extensiones tríceps cable','Curl concentrado'],
   prehab:['Elevaciones de talón (gemelos)','Extensiones de dedos del pie','Rotaciones de tobillo','Curl de dedos con toalla','Sentadilla en puntillas','Retracción de cuello','Rotaciones cervicales','Chin tucks','Fortalecimiento trapecio bajo','Extensiones de rodilla en silla','Terminal knee extension (TKE)','Curl de isquio en fitball','Rotaciones de cadera en decúbito','Abducción de cadera con banda','Monster walks con banda'],
+  extra:['Cardio bici estática','Cardio elíptica','Cardio remo','Saltos a la comba','Sprints','Movilidad de cadera','Foam roller espalda','Foam roller piernas','Estiramiento isquiotibiales','Estiramiento cuádriceps','Estiramiento gemelos','Estiramiento pectoral'],
 };
 
 function ld(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
@@ -344,8 +421,9 @@ function renderLib(){
       <div class="cat-body">
         <p style="font-size:12px;color:var(--muted);margin:8px 0 10px;">${c.desc}</p>
         ${exs.map((ex,i)=>`
-          <div class="ex-lib-item">
-            <span style="font-size:13px;font-weight:500;">${ex}</span>
+          <div class="ex-lib-item" id="exitem-${c.id}-${i}">
+            <span style="font-size:13px;font-weight:500;flex:1;">${ex}</span>
+            <button class="btn-icon" style="width:26px;height:26px;font-size:12px;margin-right:4px;" onclick="editLibEx('${c.id}',${i})" title="Editar">✏</button>
             <button class="btn-danger" onclick="removeLibEx('${c.id}',${i})">✕</button>
           </div>`).join('')}
         <div class="add-ex-row">
@@ -380,6 +458,34 @@ function removeLibEx(catId,i){
   document.getElementById('cc-'+catId).classList.add('open');
 }
 
+function editLibEx(catId, i){
+  const item = document.getElementById(`exitem-${catId}-${i}`);
+  if(!item) return;
+  const current = lib[catId][i];
+  item.innerHTML = `
+    <input type="text" value="${current}" id="edit-inp-${catId}-${i}"
+      style="flex:1;background:var(--surface3);border:1px solid var(--accent);color:var(--text);padding:6px 10px;border-radius:6px;font-size:13px;font-weight:500;outline:none;"
+      onkeydown="if(event.key==='Enter')saveLibEx('${catId}',${i});if(event.key==='Escape')renderLib()&&document.getElementById('cc-${catId}').classList.add('open')">
+    <button class="btn btn-primary btn-sm" style="margin-left:6px;" onclick="saveLibEx('${catId}',${i})">✓</button>
+    <button class="btn btn-ghost btn-sm" style="margin-left:4px;" onclick="renderLib();document.getElementById('cc-${catId}').classList.add('open')">✕</button>
+  `;
+  document.getElementById(`edit-inp-${catId}-${i}`).focus();
+  document.getElementById(`edit-inp-${catId}-${i}`).select();
+}
+
+function saveLibEx(catId, i){
+  const inp = document.getElementById(`edit-inp-${catId}-${i}`);
+  if(!inp) return;
+  const newName = inp.value.trim();
+  if(!newName){ notify('Escribe el nombre'); return; }
+  if(lib[catId].includes(newName) && lib[catId][i] !== newName){ notify('Ya existe ese nombre'); return; }
+  lib[catId][i] = newName;
+  sv('wk2_lib', lib);
+  renderLib();
+  document.getElementById('cc-'+catId).classList.add('open');
+  notify('Nombre actualizado ✓');
+}
+
 // ══════════════════════════════════════════
 // SESIÓN
 // ══════════════════════════════════════════
@@ -397,7 +503,6 @@ function startTimer(){
 function pad(n){return String(n).padStart(2,'0');}
 
 function renderSession(){
-  startTimer();
   document.getElementById('session-cats').innerHTML = CATS.map(c=>buildCatBlock(c)).join('');
   updateProgress();
 }
@@ -448,14 +553,24 @@ function buildCatBlock(c){
 
 function buildSetRow(catId, i, set){
   const done = set.done||false;
+  const wVal = set.weight||'—';
+  const rVal = set.reps||'—';
+  const doneClass = done ? ' done-in' : '';
   return `
   <tr id="sr-${catId}-${i}" class="${done?'set-row-done':''}">
     <td>${i+1}</td>
-    <td><input class="set-in${done?' done-in':''}" type="number" step="0.5" min="0" placeholder="ej: 40" value="${set.weight||''}" onchange="updSet('${catId}',${i},'weight',this.value)"></td>
-    <td><input class="set-in${done?' done-in':''}" type="text" placeholder="ej: 8" value="${set.reps||''}" onchange="updSet('${catId}',${i},'reps',this.value)"></td>
-    <td><input class="set-in${done?' done-in':''}" type="text" placeholder="opcional" value="${set.notes||''}" onchange="updSet('${catId}',${i},'notes',this.value)"></td>
+    <td><button class="wheel-btn${doneClass}" onclick="openWheelPicker('weight','${catId}',${i})">
+      <span class="wval">${wVal}</span><span class="wlabel">kg</span>
+    </button></td>
+    <td><button class="wheel-btn${doneClass}" onclick="openWheelPicker('reps','${catId}',${i})">
+      <span class="wval">${rVal}</span><span class="wlabel">reps</span>
+    </button></td>
+    <td><input class="set-in${doneClass}" type="text" placeholder="nota" value="${set.notes||''}" onchange="updSet('${catId}',${i},'notes',this.value)"></td>
     <td><button class="chk${done?' done':''}" onclick="toggleDone('${catId}',${i},this)">✓</button></td>
-    <td><button class="btn-danger" onclick="deleteSet('${catId}',${i})" title="Borrar serie">✕</button></td>
+    <td style="white-space:nowrap;">
+      <button class="multiply-btn" onclick="multiplySet('${catId}',${i})" title="Repetir esta serie N veces">×N</button>
+      <button class="btn-danger" onclick="deleteSet('${catId}',${i})" title="Borrar">✕</button>
+    </td>
   </tr>
   <tr><td colspan="6" style="padding:0 0 3px;"></td></tr>`;
 }
@@ -507,11 +622,19 @@ function deleteSet(catId,i){
 }
 
 // ── Pause sesión ─────────────────────────────
-let timerPaused=false;
+let timerPaused=true; // starts stopped
 function togglePause(){
-  timerPaused=!timerPaused;
   const btn=document.getElementById('pause-btn');
-  if(btn) btn.textContent=timerPaused?'▶':'⏸';
+  if(timerPaused){
+    // Start or resume
+    timerPaused=false;
+    startTimer();
+    if(btn){ btn.textContent='⏸ Pausar'; btn.style.background='var(--surface2)'; btn.style.borderColor='var(--border)'; btn.style.color='var(--muted)'; btn.style.fontWeight='500'; }
+  } else {
+    // Pause
+    timerPaused=true;
+    if(btn){ btn.textContent='▶ Continuar'; btn.style.background='var(--accent)'; btn.style.borderColor='var(--accent)'; btn.style.color='#000'; btn.style.fontWeight='700'; }
+  }
 }
 
 // ── Crono descanso ───────────────────────────
@@ -566,7 +689,7 @@ function updateProgress(){
   });
   const ep=document.getElementById('session-progress');
   const es=document.getElementById('session-sets-done');
-  if(ep) ep.textContent=`${filled} / 7 categorías`;
+  if(ep) ep.textContent=`${filled} / 10 categorías`;
   if(es) es.textContent=totalSets?`${totalDone} de ${totalSets} series ✓`:'';
 }
 
@@ -574,8 +697,10 @@ function clearSession(){
   if(!confirm('¿Limpiar la sesión actual?'))return;
   session=makeSession();
   sv('wk2_sess',session);
-  clearInterval(timerInt);timerInt=null;timerSec=0;timerPaused=false;
+  clearInterval(timerInt);timerInt=null;timerSec=0;timerPaused=true;
   stopRest();
+  const pb=document.getElementById('pause-btn');
+  if(pb){pb.textContent='▶ Iniciar';pb.style.background='var(--accent)';pb.style.borderColor='var(--accent)';pb.style.color='#000';pb.style.fontWeight='700';}
   renderSession();
 }
 
@@ -591,8 +716,10 @@ function finishSession(){
   sv('wk2_hist',history);
   session=makeSession();
   sv('wk2_sess',session);
-  clearInterval(timerInt);timerInt=null;timerSec=0;timerPaused=false;
+  clearInterval(timerInt);timerInt=null;timerSec=0;timerPaused=true;
   stopRest();
+  const pb=document.getElementById('pause-btn');
+  if(pb){pb.textContent='▶ Iniciar';pb.style.background='var(--accent)';pb.style.borderColor='var(--accent)';pb.style.color='#000';pb.style.fontWeight='700';}
   notify('¡Sesión guardada! 💪');
   showPage('historial');
 }
@@ -817,7 +944,228 @@ function notify(msg){
 }
 
 // ══════════════════════════════════════════
-// ESTADÍSTICAS
+// WHEEL PICKER
+// ══════════════════════════════════════════
+let wpField=null, wpCatId=null, wpSetIdx=null, wpMode=null;
+let wpMainIdx=0, wpDecIdx=0;
+
+const WEIGHT_MAIN = Array.from({length:201},(_,i)=>i);           // 0-200 kg
+const WEIGHT_DEC  = ['.00','.25','.50','.75'];                     // 0.25 multiples
+const REPS_MAIN   = Array.from({length:50},(_,i)=>i+1);           // 1-50 reps
+
+function openWheelPicker(field, catId, setIdx){
+  wpField=field; wpCatId=catId; wpSetIdx=setIdx;
+  const set = session[catId].sets[setIdx];
+
+  const modal = document.getElementById('wheel-picker-modal');
+  const title = document.getElementById('wheel-picker-title');
+  const decWrap = document.getElementById('drum-decimal-wrap');
+  const dot = modal.querySelector('.drums-wrap > div:nth-child(2)');
+
+  if(field === 'weight'){
+    title.textContent = 'Peso (kg)';
+    wpMode = 'weight';
+    decWrap.style.display = '';
+    dot.style.display = '';
+    const val = parseFloat(set.weight)||0;
+    wpMainIdx = WEIGHT_MAIN.indexOf(Math.floor(val));
+    if(wpMainIdx<0) wpMainIdx=0;
+    const dec = val%1;
+    wpDecIdx = dec<0.125?0:dec<0.375?1:dec<0.625?2:3;
+    buildDrum('drum-main-track', WEIGHT_MAIN, wpMainIdx, 'kg');
+    buildDrum('drum-dec-track', WEIGHT_DEC, wpDecIdx, '');
+    document.getElementById('drum-main-label').textContent = 'kg';
+  } else {
+    title.textContent = 'Repeticiones';
+    wpMode = 'reps';
+    decWrap.style.display = 'none';
+    dot.style.display = 'none';
+    const val = parseInt(set.reps)||0;
+    wpMainIdx = Math.max(0, Math.min(val-1, REPS_MAIN.length-1));
+    if(val === 0) wpMainIdx = 0;
+    buildDrum('drum-main-track', REPS_MAIN, wpMainIdx, 'reps');
+    document.getElementById('drum-main-label').textContent = 'reps';
+  }
+
+  modal.classList.add('open');
+  setTimeout(()=>{
+    scrollDrumTo('drum-main', wpMainIdx);
+    if(wpMode==='weight') scrollDrumTo('drum-dec', wpDecIdx);
+  }, 50);
+}
+
+function buildDrum(trackId, values, selectedIdx, unit){
+  const track = document.getElementById(trackId);
+  // Add padding items for centering
+  const pad = 2;
+  let html = '';
+  for(let p=0;p<pad;p++) html += `<div class="drum-item" style="opacity:0;">—</div>`;
+  values.forEach((v,i)=>{
+    html += `<div class="drum-item${i===selectedIdx?' selected':''}" data-idx="${i}">${v}</div>`;
+  });
+  for(let p=0;p<pad;p++) html += `<div class="drum-item" style="opacity:0;">—</div>`;
+  track.innerHTML = html;
+  setupDrumDrag(track, values, selectedIdx, trackId==='drum-main-track' ? 'main' : 'dec');
+}
+
+function scrollDrumTo(drumId, idx){
+  const drum = document.getElementById(drumId);
+  const track = drum.querySelector('.drum-track');
+  const itemH = 40;
+  const pad = 2;
+  track.style.transform = `translateY(${-idx * itemH}px)`;
+  updateDrumSelected(track, idx);
+}
+
+function updateDrumSelected(track, idx){
+  track.querySelectorAll('.drum-item').forEach((el,i)=>{
+    const actualIdx = i - 2; // subtract pad
+    el.classList.toggle('selected', actualIdx===idx);
+  });
+}
+
+function setupDrumDrag(track, values, initIdx, which){
+  const itemH = 40;
+  let startY=0, startT=0, currentIdx = initIdx;
+  let isDragging=false;
+
+  function getIdx(){ return which==='main' ? wpMainIdx : wpDecIdx; }
+  function setIdx(v){
+    v = Math.max(0, Math.min(values.length-1, v));
+    if(which==='main') wpMainIdx=v; else wpDecIdx=v;
+    return v;
+  }
+
+  function applyTransform(idx){
+    track.style.transition='none';
+    track.style.transform=`translateY(${-idx*itemH}px)`;
+    updateDrumSelected(track, idx);
+  }
+
+  function snapTo(idx){
+    idx = Math.max(0, Math.min(values.length-1, Math.round(idx)));
+    setIdx(idx);
+    track.style.transition='transform .2s cubic-bezier(.25,.46,.45,.94)';
+    track.style.transform=`translateY(${-idx*itemH}px)`;
+    updateDrumSelected(track, idx);
+  }
+
+  track.addEventListener('touchstart', e=>{
+    isDragging=true;
+    startY=e.touches[0].clientY;
+    startT=getIdx();
+    track.style.transition='none';
+  },{passive:true});
+
+  track.addEventListener('touchmove', e=>{
+    if(!isDragging) return;
+    const dy = startY - e.touches[0].clientY;
+    const newIdx = startT + dy/itemH;
+    const clamped = Math.max(0, Math.min(values.length-1, newIdx));
+    track.style.transform=`translateY(${-clamped*itemH}px)`;
+    updateDrumSelected(track, Math.round(clamped));
+    e.preventDefault();
+  },{passive:false});
+
+  track.addEventListener('touchend', e=>{
+    isDragging=false;
+    const dy = startY - e.changedTouches[0].clientY;
+    snapTo(startT + dy/itemH);
+  });
+
+  // Mouse support for desktop
+  track.addEventListener('mousedown', e=>{
+    isDragging=true; startY=e.clientY; startT=getIdx();
+    track.style.cursor='grabbing';
+    track.style.transition='none';
+  });
+  document.addEventListener('mousemove', e=>{
+    if(!isDragging) return;
+    const dy = startY - e.clientY;
+    const newIdx = startT + dy/itemH;
+    const clamped = Math.max(0, Math.min(values.length-1, newIdx));
+    track.style.transform=`translateY(${-clamped*itemH}px)`;
+    updateDrumSelected(track, Math.round(clamped));
+  });
+  document.addEventListener('mouseup', e=>{
+    if(!isDragging) return;
+    isDragging=false;
+    track.style.cursor='grab';
+    const dy = startY - e.clientY;
+    snapTo(startT + dy/itemH);
+  });
+
+  // Click on item
+  track.querySelectorAll('.drum-item').forEach((el,i)=>{
+    el.addEventListener('click',()=>{
+      const idx = i - 2;
+      if(idx>=0 && idx<values.length) snapTo(idx);
+    });
+  });
+}
+
+function confirmWheelPicker(){
+  if(wpCatId===null) return;
+  let val;
+  if(wpMode==='weight'){
+    const main = WEIGHT_MAIN[wpMainIdx] || 0;
+    const decMap = [0, 0.25, 0.5, 0.75];
+    const dec = decMap[wpDecIdx] || 0;
+    const total = main + dec;
+    val = total === 0 ? '' : String(total);
+  } else {
+    val = String(REPS_MAIN[wpMainIdx] || 1);
+  }
+  updSet(wpCatId, wpSetIdx, wpField, val);
+  // Update the button display
+  const row = document.getElementById(`sr-${wpCatId}-${wpSetIdx}`);
+  if(row){
+    const btns = row.querySelectorAll('.wheel-btn');
+    if(wpMode==='weight' && btns[0]) btns[0].querySelector('.wval').textContent = val||'—';
+    if(wpMode==='reps'   && btns[1]) btns[1].querySelector('.wval').textContent = val||'—';
+  }
+  document.getElementById('wheel-picker-modal').classList.remove('open');
+}
+
+// Close picker on background tap
+document.getElementById('wheel-picker-modal').addEventListener('click', e=>{
+  if(e.target===document.getElementById('wheel-picker-modal'))
+    document.getElementById('wheel-picker-modal').classList.remove('open');
+});
+
+// ══════════════════════════════════════════
+// MULTIPLY SET (×N)
+// ══════════════════════════════════════════
+function multiplySet(catId, idx){
+  const set = session[catId].sets[idx];
+  // Store pending multiply info
+  window._mxCatId = catId;
+  window._mxIdx = idx;
+  // Show modal
+  document.getElementById('mx-info').textContent =
+    `${set.weight||'—'} kg · ${set.reps||'—'} reps`;
+  document.getElementById('mx-modal').classList.add('open');
+  document.getElementById('mx-input').value = '3';
+  document.getElementById('mx-input').focus();
+  document.getElementById('mx-input').select();
+}
+
+function confirmMultiply(){
+  const n = parseInt(document.getElementById('mx-input').value);
+  if(!n || n < 1){ notify('Pon un número válido'); return; }
+  const catId = window._mxCatId;
+  const idx   = window._mxIdx;
+  const set   = session[catId].sets[idx];
+  for(let i=0;i<n;i++){
+    session[catId].sets.push({weight:set.weight, reps:set.reps, notes:set.notes, done:false});
+  }
+  sv('wk2_sess', session);
+  const cat = CATS.find(c=>c.id===catId);
+  document.getElementById('scat-'+catId).outerHTML = buildCatBlock(cat);
+  updateProgress();
+  document.getElementById('mx-modal').classList.remove('open');
+  notify(`${n} series iguales añadidas ✓`);
+}
 // ══════════════════════════════════════════
 let statPeriod='sesion', statMetric='tonelaje';
 let mainChartInst=null, exChartInst=null, catChartInst=null;
@@ -1014,10 +1362,6 @@ function importData(event){
 }
 
 renderLib();
-
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('/workout-app/sw.js');
-}
 </script>
 </body>
 </html>
